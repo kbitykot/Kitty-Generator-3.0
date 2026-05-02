@@ -1,7 +1,8 @@
 /*Name: Caitlyn Swick
-CIS 1202-501
-Development began 5/2/26
-Uploaded to GitHub for fun. Check it out.*/
+//CIS 1202-501
+//Development began 5/2/26
+//Uploaded to GitHub for fun. Check it out: https://github.com/kbitykot/Kitty-Generator-3.0.git
+// What the heck why isn't my code block working-- */
 
 #ifndef KITTY_H
 #define KITTY_H
