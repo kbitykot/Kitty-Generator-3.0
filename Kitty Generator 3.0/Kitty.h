@@ -13,26 +13,79 @@
 enum class TailLength { Short, Medium, Long };
 enum class FurPattern { Plain, Point, Speckles, Spots, Patches, Stripes};
 enum class FurLength { Hairless, Short, Average, Long, ExtraFluffy};
-enum class KittenSize { Tiny, Small, Average, Big };
-enum class AdultSize { Small, Average, Big, Monster };
+enum class KittySize { Tiny, Small, Average, Big, Monster };
+
+struct Age {
+	int amount;
+	bool isAdult;
+};
 
 class Kitty {
 private:
-	std::string name;
+	std::string name, accessory, gender;
 	std::vector<std::string> furColors;
 	TailLength tail;
 	std::vector<std::string> personality;
-	int age;
+	Age age;
 	bool isKitten, hasHeterochromia;
 	std::vector<std::string> eyeColors;
 	std::vector<FurPattern> patterns;
 	FurLength furLength;
-	KittenSize kSize;
-	AdultSize aSize;
-	std::string accessory, gender;
+	KittySize size;
 
 public:
-	
+    void setName(std::string n) {
+        name = n;
+    }
+    void setAge(int amount, bool isAdult) {
+        age.amount = amount;
+        age.isAdult = isAdult;
+    }
+    void setFurLength(FurLength f) {
+        furLength = f;
+    }
+    void setSize(KittySize s) {
+        size = s;
+    }
+
+    //Vectors: "add" one at a time
+    void addPattern(FurPattern p) {
+        if (patterns.size() < 3)
+            patterns.push_back(p);
+    }
+    void addPersonality(std::string p) {
+        if (personality.size() < 5)
+            personality.push_back(p);
+    }
+    void addEyeColor(std::string c) {
+        if (eyeColors.size() < 2)
+            eyeColors.push_back(c);
+    }
+
+    // --- Getters ---
+    std::string getName() const {
+        return name;
+    }
+    Age getAge() const {
+        return age;
+    }
+    FurLength getFurLength() const {
+        return furLength;
+    }
+    KittySize getSize() const {
+        return size;
+    }
+
+    // Returning vectors by reference is more efficient
+    const std::vector<FurPattern>& getPatterns() const {
+        return patterns;
+    }
+    const std::vector<std::string>& getPersonality() const {
+        return personality;
+    }
+    const std::vector<std::string>& getEyeColors() const {
+        return eyeColors;
+    }
 };
 
 #endif
