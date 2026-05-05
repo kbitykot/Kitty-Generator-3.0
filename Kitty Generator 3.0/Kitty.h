@@ -86,6 +86,14 @@ public:
     const std::vector<std::string>& getEyeColors() const {
         return eyeColors;
     }
+
+    // --- Interaction Function Prototypes ---
+    // These functions may change in the future; not a final list.
+    void meow();
+    void hiss();
+    void play(std::string toy);
+    void play(Kitty &friendKitty);
+    void attack();
 };
 
 #endif
