@@ -11,7 +11,7 @@ using namespace std;
 
 const int MAX_KITTIES = 5;
 
-void createKitty(Kitty&);/
+void createKitty(Kitty&);
 void setGeneralInfo(Kitty&);
 void setAttributes(Kitty&);
 void setPersonality(Kitty&);
@@ -24,11 +24,11 @@ int main() {
 	srand(time(0));
 	vector<Kitty> salon;
 
-	for (int i = 0; i < 5; i++) {
-		Kitty tempKitty;
-		string tempName;
+	cout << "Welcome to the Kitty Salon! We have prepared an even better system to create kitties. Now, you can take them home with you!" << endl;
+	cout << "Press ENTER to begin kitty creation...";
+	cin.get();
+}
 
-
-	}
+void createKitty(Kitty& temp) {
 
 }

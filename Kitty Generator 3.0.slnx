@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Kitty Generator 3.0/Kitty Generator 3.0.vcxproj" />
+  <Project Path="Kitty Generator 3.0/Kitty Generator 3.0.vcxproj" Id="89e6ec0a-d41b-4b8d-b454-cb44acd9f97f" />
 </Solution>
