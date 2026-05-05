@@ -94,6 +94,7 @@ public:
     void play(std::string toy);
     void play(Kitty &friendKitty);
     void attack();
+    void introduce();
 };
 
 #endif

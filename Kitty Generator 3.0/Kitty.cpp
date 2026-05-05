@@ -89,3 +89,16 @@ void Kitty::attack() {
 	int random = rand() % 7;
 	std::cout << name << attacks[random] << std::endl;
 }
+
+void Kitty::introduce() {
+	std::cout << "You open the door to " << name << "'s carrier." << std::endl;
+
+	int choice = rand() % 2;
+
+	if (choice == 0) {
+		this->meow();
+	}
+	else {
+		this->hiss();
+	}
+}
