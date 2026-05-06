@@ -138,12 +138,12 @@ void setGeneralInfo(Kitty& k) {
 	while (confirmed == 'N') {
 		int ageVal;
 		if (!adultChoice) {
-			ageVal = getValidatedInput<int>("\nPlease enter the kitten's age in months (0-48): ", 0, 48);
+			ageVal = getValidatedInput<int>("\nPlease enter the kitten's age in months: ", 0, 1200000);
 			int years = ageVal / 12;
 			int months = ageVal % 12;
 
 			if (years > 0) {
-				cout << "Your kitty will be " << years << " year(s) and " << months << " months old. Is this OK? [Y/N]: ";
+				cout << "Your kitten will be " << years << " year(s) and " << months << " months old. Is this OK? [Y/N]: ";
 			}
 			else {
 				cout << "Your kitty will be " << ageVal << " months old. Is this OK? [Y/N]: ";
@@ -203,7 +203,13 @@ void setAttributes(Kitty& k) {
 			cout << "1 - Small\n2 - Average\n3 - Big\n4 - Monster" << endl;
 		}
 		int choice = getValidatedInput<int>("Enter your choice (1-4): ", 1, 4);
-		k.setSize(static_cast<KittySize>(choice - 1));
+
+		if (!k.isAdult()) {
+			k.setSize(static_cast<KittySize>(choice - 1)); //Kittens: Index 0-4; cannot be "Monster"
+		}
+		else {
+			k.setSize(static_cast<KittySize>(choice)); //Adults: Index 1-5; cannot be "Tiny"
+		}
 
 		cout << "You chose " << k.getSizeLabel() << " for your kitty's size. Is this OK? [Y/N]: ";
 		confirmed = getValidatedChar("", "YN");

@@ -7,7 +7,6 @@ Kitty::Kitty() {
 	age.isAdult = false;
 	size = KittySize::Tiny;
 	furLength = FurLength::Hairless;
-	hasHeterochromia = false;
 	tail = TailLength::Short;
 
 }
@@ -125,12 +124,7 @@ std::string Kitty::getTailLabel() const {
 }
 
 std::string Kitty::getSizeLabel() const {
-	if (!age.isAdult) {
-		std::string labels[] = { "Tiny", "Small", "Average", "Big" };
-		return labels[static_cast<int>(size)];
-	}
-	else {
-		std::string labels[] = { "Small", "Average", "Big", "Monster" };
-		return labels[static_cast<int>(size)];
-	}
+	std::string labels[] = { "Tiny", "Small", "Average", "Big", "Monster" };
+	int index = static_cast<int>(size);
+	return labels[index];
 }
