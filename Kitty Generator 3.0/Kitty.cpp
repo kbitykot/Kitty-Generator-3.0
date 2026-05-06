@@ -128,3 +128,8 @@ std::string Kitty::getSizeLabel() const {
 	int index = static_cast<int>(size);
 	return labels[index];
 }
+
+std::string Kitty::getPatternLabel(FurPattern p) const {
+	std::string labels[] = { "Plain", "Point", "Speckles", "Spots", "Patches", "Stripes" };
+	return labels[static_cast<int>(p)];
+}

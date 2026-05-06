@@ -34,6 +34,18 @@ private:
 
 public:
     Kitty();
+    void clearPersonality() {
+        personality.clear();
+    }
+    void clearEyeColors() {
+        eyeColors.clear();
+    }
+    void clearPatterns() {
+        patterns.clear();
+    }
+    void clearFurColors() {
+        furColors.clear();
+    }
     void setName(std::string n) {
         name = n;
     }
@@ -53,6 +65,9 @@ public:
     void setTail(TailLength t) {
         tail = t;
     }
+    void setAccessory(std::string a) {
+        accessory = a;
+    }
 
     //Vectors: "add" one at a time
     void addPattern(FurPattern p) {
@@ -66,6 +81,9 @@ public:
     void addEyeColor(std::string c) {
         if (eyeColors.size() < 2)
             eyeColors.push_back(c);
+    }
+    void addFurColor(std::string c) {
+        furColors.push_back(c);
     }
 
     // --- Getters ---
@@ -84,9 +102,16 @@ public:
     std::string getGender() const {
         return gender;
     }
+    std::string getAccessory() const {
+        return accessory;
+    }
+    TailLength getTail() const {
+        return tail;
+    }
     std::string getFurLabel() const;
     std::string getTailLabel() const;
     std::string getSizeLabel() const;
+    std::string getPatternLabel(FurPattern p) const;
     bool getHasHeterochromia() const {
         return eyeColors.size() > 1;
     }
@@ -103,6 +128,9 @@ public:
     }
     const std::vector<std::string>& getEyeColors() const {
         return eyeColors;
+    }
+    const std::vector<std::string>& getFurColors() const {
+        return furColors;
     }
 
     // --- Interaction Function Prototypes ---
