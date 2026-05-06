@@ -57,7 +57,7 @@ void setPersonality(Kitty&);        //Allows user to set 5 personality traits fo
 void setColors(Kitty&);             //Allows user to set colors for kitty.
 void accessoryDetermination(Kitty&);    //Big function which determines the accessory the kitty will have.
 void saveKitties(const vector<Kitty>&); //Saves kitties to a file once they have been created.
-void displayKitties();                  //Displays kitties to the console.
+void displayKitties(const vector<Kitty>&);                  //Displays kitties to the console.
 vector<Kitty> loadKitties();            //Loads kitties from a previous save file.
 
 bool isValidTrait(string trait) {
@@ -409,7 +409,7 @@ void accessoryDetermination(Kitty& k) {
 	}
 }
 
-void saveKitties(const vector<Kitty>& salon) { //Will be a binary file to assist in saving and loading kitties.
+void saveKitties(const vector<Kitty>& salon) { //Binary file to assist in saving and loading kitties. Gemini helped with writing.
 	ofstream mew("kitties.dat", ios::out | ios::binary);
 
 	if (mew.is_open()) {
@@ -417,6 +417,7 @@ void saveKitties(const vector<Kitty>& salon) { //Will be a binary file to assist
 		mew.write(reinterpret_cast<const char*>(&count), sizeof(count));
 
 		for (const auto& k : salon) {
+			//Save strings
 			auto saveString = [&](const string& s) {
 				size_t len = s.length();
 				mew.write(s.c_str(), len);
@@ -424,14 +425,20 @@ void saveKitties(const vector<Kitty>& salon) { //Will be a binary file to assist
 			saveString(k.getName());
 			saveString(k.getGender());
 			saveString(k.getAccessory());
+
+			//Struct
 			Age kAge = k.getAge();
 			mew.write(reinterpret_cast<const char*>(&kAge), sizeof(kAge));
+
+			//Enum classes
 			KittySize ks = k.getSize();
 			FurLength fl = k.getFurLength();
 			TailLength tl = k.getTail();
 			mew.write(reinterpret_cast<const char*>(&ks), sizeof(ks));
 			mew.write(reinterpret_cast<const char*>(&fl), sizeof(fl));
 			mew.write(reinterpret_cast<const char*>(&tl), sizeof(tl));
+
+			//Vectors
 			auto saveVector = [&](const vector<string>& v) {
 				size_t vSize = v.size();
 				mew.write(reinterpret_cast<const char*>(&vSize), sizeof(vSize));
@@ -452,5 +459,146 @@ void saveKitties(const vector<Kitty>& salon) { //Will be a binary file to assist
 	}
 	else {
 		cout << "Error: Could not open binary file." << endl;
+	}
+}
+
+vector<Kitty> loadKitties() { //Loads kitties. Gemini helped with writing.
+	vector<Kitty> loadedSalon;
+	ifstream mew("kitties.dat", ios::in | ios::binary);
+
+	if (mew.is_open()) {
+		size_t count = 0;
+		mew.read(reinterpret_cast<char*>(&count), sizeof(count));
+		Kitty k;
+
+		for (size_t i = 0; i < count; i++) {
+			//Load strings
+			auto readString = [&]() -> string {
+				size_t len = 0;
+				mew.read(reinterpret_cast<char*>(&len), sizeof(len));
+				string s(len, ' ');
+				mew.read(&s[0], len);
+				return s;
+				};
+			k.setName(readString());
+			k.setGender(readString());
+			k.setAccessory(readString());
+
+			//Struct
+			Age kAge;
+			mew.read(reinterpret_cast<char*>(&kAge), sizeof(kAge));
+			k.setAge(kAge.amount, kAge.isAdult);
+
+			//Enum classes
+			KittySize ks;
+			FurLength fl;
+			TailLength tl;
+			mew.read(reinterpret_cast<char*>(&ks), sizeof(ks));
+			mew.read(reinterpret_cast<char*>(&fl), sizeof(fl));
+			mew.read(reinterpret_cast<char*>(&tl), sizeof(tl));
+			k.setSize(ks);
+			k.setFurLength(fl);
+			k.setTail(tl);
+
+			//Vectors
+			size_t traitCount = 0;
+			mew.read(reinterpret_cast<char*>(&traitCount), sizeof(traitCount));
+			for (size_t j = 0; j < traitCount; j++) {
+				k.addPersonality(readString());
+			}
+			size_t eyeColorCount = 0;
+			mew.read(reinterpret_cast<char*>(&eyeColorCount), sizeof(eyeColorCount));
+			for (size_t j = 0; j < eyeColorCount; j++) {
+				k.addEyeColor(readString());
+			}
+			size_t furColorCount = 0;
+			mew.read(reinterpret_cast<char*>(&furColorCount), sizeof(furColorCount));
+			for (size_t j = 0; j < furColorCount; j++) {
+				k.addFurColor(readString());
+			}
+			size_t patternCount = 0;
+			mew.read(reinterpret_cast<char*>(&patternCount), sizeof(patternCount));
+			for (size_t j = 0; j < patternCount; j++) {
+				FurPattern p;
+				mew.read(reinterpret_cast<char*>(&p), sizeof(p));
+				k.addPattern(p);
+			}
+		}
+		loadedSalon.push_back(k);
+		mew.close();
+		cout << loadedSalon.size() << " kitties have been loaded and are ready to play!" << endl;
+	}
+	else {
+		cout << "No save data found. Starting from scratch..." << endl;
+	}
+	return loadedSalon;
+}
+
+void displayKitties(const vector<Kitty>& salon) {
+	if (salon.empty()) {
+		cout << "You haven't created any kitties, or they could not be found." << endl;
+		return;
+	}
+
+	cout << "\n*********************************************" << endl;
+	cout << "             KITTY SALON REGISTRY              " << endl;
+	cout << "*********************************************" << endl;
+
+	for (size_t i = 0; i < salon.size(); i++) {
+		const Kitty& k = salon[i];
+		Age kAge = k.getAge();
+
+		cout << "Kitty #" << (i + 1) << ": " << k.getName() << endl;
+		cout << "-----------------------------------------" << endl;
+
+		int years = kAge.amount / 12;
+		int months = kAge.amount % 12;
+
+		cout << (kAge.isAdult ? "Adult" : "Kitten") << "; " << years << " years and " << months << " months old" << endl;
+		cout << "Gender: " << k.getGender() << endl;
+		cout << "Size: " << k.getSizeLabel() << endl;
+		
+		const auto& eyes = k.getEyeColors();
+		if (eyes.size() > 1) {
+			cout << "   Eye Colors   " << endl;
+			cout << "----------------" << endl;
+			cout << "Left: " << eyes[0] << endl;
+			cout << "Right: " << eyes[1] << endl;
+		}
+		else {
+			cout << "Eye Color: " << eyes[0] << endl;
+		}
+
+		cout << "      Fur Information      " << endl;
+		cout << "---------------------------" << endl;
+		cout << "Fur Type: " << k.getFurLabel() << endl;
+
+		const auto& patterns = k.getPatterns();
+		const auto& colors = k.getFurColors();
+		cout << "Primary Color: " << colors[0] << endl;
+
+		if (!patterns.empty() && patterns[0] != FurPattern::Plain) {
+			cout << "Patterns: ";
+			for (size_t p = 0; p < patterns.size(); p++) {
+				cout << colors[p + 1] << " " << k.getPatternLabel(patterns[p]);
+				if (p < patterns.size() - 1) {
+					cout << ", ";
+				}
+			}
+			cout << endl;
+		}
+		else {
+			cout << "Patterns: None (Plain)" << endl;
+		}
+		cout << "Purrsonality Traits" << endl;
+		cout << "-------------------" << endl;
+		const auto& traits = k.getPersonality();
+		for (size_t j = 0; j < traits.size(); j++) {
+			cout << traits[j] << endl;
+		}
+		cout << "   Accessory   " << endl;
+		cout << "---------------" << endl;
+		cout << k.getAccessory() << endl;
+		cout << "*********************************************" << endl;
 	}
 }
