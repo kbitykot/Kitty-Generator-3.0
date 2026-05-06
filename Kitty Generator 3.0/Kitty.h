@@ -31,6 +31,7 @@ private:
 	std::vector<FurPattern> patterns;
 	FurLength furLength;
 	KittySize size;
+    int tolerance, patience;
 
 public:
     Kitty();
@@ -55,6 +56,9 @@ public:
     void setAge(int amount, bool isAdult) {
         age.amount = amount;
         age.isAdult = isAdult;
+    }
+    void setTolerance(int t) {
+        tolerance = t;
     }
     void setFurLength(FurLength f) {
         furLength = f;
@@ -141,6 +145,15 @@ public:
     void play(Kitty &friendKitty);
     void attack();
     void introduce();
+    void losePatience() {
+        patience++;
+    }
+    void resetPatience() {
+        patience = 0;
+    }
+    bool isGrumpy() const {
+        return patience >= tolerance;
+    }
 };
 
 #endif

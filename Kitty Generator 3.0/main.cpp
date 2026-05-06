@@ -11,6 +11,17 @@ using namespace std;
 
 const int MAX_KITTIES = 5;
 
+Kitty createKitty();                //Nested function which calls functions that set kitty values.
+void setGeneralInfo(Kitty&);        //Sets general info for kitty.
+void setAttributes(Kitty&);         //Sets attributes for kitty.
+void setPersonality(Kitty&);        //Allows user to set 5 personality traits for kitty.
+void setColors(Kitty&);             //Allows user to set colors for kitty.
+void accessoryDetermination(Kitty&);     //Big function which determines the accessory the kitty will have.
+void saveKitties(const vector<Kitty>&);   //Saves kitties to a file once they have been created.
+void displayKitties(const vector<Kitty>&);  //Displays kitties to the console.
+vector<Kitty> loadKitties();                //Loads kitties from a previous save file.
+void interactWithKitty(vector<Kitty>&);     //Lets user select a kitty to interact with. Also holds interact logic.
+
 template <typename T>
 T getValidatedInput(string prompt, T min, T max) { //Validates most input.
 	T input;
@@ -28,6 +39,7 @@ T getValidatedInput(string prompt, T min, T max) { //Validates most input.
 	}
 	return input;
 }
+
 char getValidatedChar(string prompt, string allowed) { //Validates specific character input, mainly for Y/N options.
 	char input = ' ';
 	bool matchFound = false;
@@ -50,16 +62,6 @@ char getValidatedChar(string prompt, string allowed) { //Validates specific char
 	return input;
 }
 
-Kitty createKitty();                //Nested function which calls functions that set kitty values.
-void setGeneralInfo(Kitty&);        //Sets general info for kitty.
-void setAttributes(Kitty&);         //Sets attributes for kitty.
-void setPersonality(Kitty&);        //Allows user to set 5 personality traits for kitty.
-void setColors(Kitty&);             //Allows user to set colors for kitty.
-void accessoryDetermination(Kitty&);    //Big function which determines the accessory the kitty will have.
-void saveKitties(const vector<Kitty>&); //Saves kitties to a file once they have been created.
-void displayKitties(const vector<Kitty>&);                  //Displays kitties to the console.
-vector<Kitty> loadKitties();            //Loads kitties from a previous save file.
-
 bool isValidTrait(string trait) {
 	if (trait.length() == 0)
 		return false;
@@ -71,27 +73,119 @@ bool isValidTrait(string trait) {
 	return true;
 }
 
+bool fileExists(const string& filename) {
+	ifstream check(filename);
+	return check.good();
+}
+
+void creationDelay() {
+	cout << "Your kitty has been created! Please wait while we finalize the details." << endl;
+	cout << "Sending kitty to a groomer..." << endl;
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Giving kitty a bath..." << endl;
+	this_thread::sleep_for(chrono::seconds(7));
+	cout << "Drying kitty off..." << endl;
+	this_thread::sleep_for(chrono::seconds(3));
+	cout << "Brushing kitty's fur..." << endl;
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Trimming kitty's nails..." << endl;
+	this_thread::sleep_for(chrono::seconds(3));
+	cout << "Apparently our groomer wants to paint the kitty's nails..." << endl;
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Fighting with groomer for the kitty..." << endl;
+	this_thread::sleep_for(chrono::seconds(7));
+	cout << "We won, putting kitty's accessories back on..." << endl;
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Placing kitty in its carrier..." << endl;
+	this_thread::sleep_for(chrono::seconds(3));
+	cout << "All finished!" << endl;
+}
+
 int main() {
 	srand(time(0));
-	char selection, newKitty;
 	vector<Kitty> salon;
-	Kitty temp;
-	temp.setName("Unnamed");
+	string filename = "kitties.dat";
 
-	cout << "Welcome to the Kitty Salon! We have prepared an even better system to create kitties since Kitty Generator 2.5. Now, you can take them home with you!" << endl;
-	cout << "Press ENTER to begin kitty creation...";
-	cin.get();
+	if (fileExists(filename)) {
+		char choice = getValidatedChar("Welcome back! Would you like to load your saved kitties or create new ones? [L/C]: ", "LC");
 
-	do {
-		if (salon.size() < MAX_KITTIES) {
-			Kitty temp = createKitty();
-			salon.push_back(temp);
+		if (choice == 'L') {
+			salon = loadKitties();
 		}
 		else {
-			cout << "You've reached the max number of kitties that can be created!";
+			cout << "You will not be able to recover your saved kitties once you save new ones. It is recommended that you make a backup of your kitties before continuing." << endl;
+			char choice = getValidatedChar("Are you certain that you would like to create a new set of kitties? [Y/N]: ", "YN");
+			if (choice == 'Y') {
+				cout << "Starting fresh!~ Your kitties will be kept until you save the new ones, so take this time to make your backup if you haven't already!" << endl;
+			}
+			else {
+				cout << "Okay, we'll load your saved kitties instead." << endl;
+				salon = loadKitties();
+			}
+		}
+	}
+	else {
+		cout << "Welcome to the Kitty Salon! We have prepared an even better system to create kitties since Kitty Generator 2.5. Now, you can take them home with you!" << endl;
+	}
+	cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
+	cin.ignore(1000, '\n');
+	cin.get();
+
+	Kitty newKitty;
+	createKitty();
+
+	creationDelay();
+	salon.push_back(newKitty);
+	
+	bool running = true;
+	while (running) {
+		cout << "\n--- MAIN MENU ---" << endl;
+		cout << "1. Create Another Kitty (up to 5)" << endl;
+		cout << "2. View Kitties" << endl;
+		cout << "3. Interact with a Kitty" << endl;
+		cout << "4. Save Progress" << endl;
+		cout << "5. Exit Program" << endl;
+
+		int menuChoice = getValidatedInput<int>("Please enter your number choice: ", 1, 5);
+
+		switch (menuChoice) {
+		case 1: {
+			if (salon.size() >= 5) {
+				cout << "\nThe salon is full! You cannot have more than 5 kitties at once." << endl;
+			}
+			else {
+				Kitty newKitty;
+				createKitty();
+				creationDelay();
+				salon.push_back(newKitty);
+			}
+			
 			break;
 		}
-	} while (toupper(newKitty) == 'Y');
+		case 2: {
+			displayKitties(salon);
+			break;
+		}
+		case 3: {
+			interactWithKitty(salon);
+			break;
+		}
+		case 4: {
+			saveKitties(salon);
+			break;
+		}
+		case 5: {
+			cout << "Would you like to save before leaving? ";
+			if (getValidatedChar("[Y/N]: ", "YN") == 'Y') {
+				saveKitties(salon);
+			}
+			cout << "Thank you for visiting the Kitty Salon! Have a purr-fect day." << endl;
+			running = false;
+			break;
+			}
+		}
+	}
+	return 0;
 }
 
 Kitty createKitty() {
@@ -162,7 +256,7 @@ void setGeneralInfo(Kitty& k) {
 			}
 		}
 		else {
-			ageVal = getValidatedInput<int>("\nPlease enter your kitty's age in years (1-100000): ", 1, 100000); //I know, this is not a reasonable lifespan for a cat. However... this is a program. We can do whatever we desire in a program, and I choose to make kitties live for ETERNITY! Mwahahaha!
+			ageVal = getValidatedInput<int>("\nPlease enter your kitty's age in years (1-100000): ", 1, 100000); //I know, this is not a reasonable lifespan for a cat. However... this is a program. We can do whatever we desire in a program, and I choose to let kitties live for ETERNITY! Mwahahaha!
 			cout << "Your kitty will be " << ageVal << " years old. Is this OK? [Y/N]: ";
 		}
 		confirmed = getValidatedChar("", "YN");
@@ -600,5 +694,105 @@ void displayKitties(const vector<Kitty>& salon) {
 		cout << "---------------" << endl;
 		cout << k.getAccessory() << endl;
 		cout << "*********************************************" << endl;
+	}
+}
+
+void interactWithKitty(vector<Kitty>& salon) {
+	if (salon.empty()) {
+		cout << "The room is empty. You haven't created any kitties yet, or they could not be found." << endl;
+		return;
+	}
+
+	cout << "\n--- Search for a Kitty ---" << endl;
+	cout << "Enter the name of the kitty you'd like to see: ";
+	cin >> ws;
+	string searchName;
+	getline(cin, searchName);
+	int foundIndex = -1;
+	for (size_t i = 0; i < salon.size(); i++) {
+		if (salon[i].getName() == searchName) {
+			foundIndex = i;
+			break;
+		}
+	}
+	if (foundIndex == -1) {
+		cout << "Sorry, a kitty named \"" << searchName << "\" wasn't found. " << endl;
+		return;
+	}
+
+	Kitty& k = salon[foundIndex];
+	k.resetPatience();
+	cout << "\nYou walk up to " << k.getName() << "." << endl;
+	k.setTolerance(rand() % 48 + 3); //Some kitties don't like interacting, while others tolerate anything ... (looks at ragdoll cats) ... In this program, the tolerance will change with every interaction, because kitties are quite unpredictable at times.
+
+	bool interacting = true;
+	while (interacting) {
+		if (k.isGrumpy()) {
+			k.attack();
+			interacting = false;
+			break;
+		}
+
+		cout << "\n" << k.getName() << " looks up at you. What should they do?" << endl;
+		cout << "1 - Play\n2 - Meow\n3 - Hiss\n4 - Play with friend\n5 - Leave" << endl;
+		int action = getValidatedInput<int>("Enter your choice: ", 1, 5);
+
+		if (action == 1) {
+			vector<string> toyBox = { "Feather Wand", "Laser Pointer", "Jingly Ball", "Interactive Bird" };
+			cout << "\nChoose a toy from the toy box:" << endl;
+			for (size_t t = 0; t < toyBox.size(); t++) {
+				cout << t + 1 << " - " << toyBox[t] << endl;
+			}
+			cout << toyBox.size() + 1 << " - Other" << endl;
+
+			int toyChoice = getValidatedInput<int>("Select a toy: ", 1, toyBox.size() + 1);
+			string selectedToy;
+
+			if (toyChoice <= toyBox.size()) {
+				selectedToy = toyBox[toyChoice - 1];
+			}
+			else {
+				cout << "What toy do you use to play with the kitty?: ";
+				cin >> ws;
+				getline(cin, selectedToy);
+			}
+			k.play(selectedToy);
+			k.losePatience();
+		}
+		else if (action == 2) {
+			k.meow();
+			k.losePatience();
+		}
+		else if (action == 3) {
+			k.hiss();
+			k.losePatience();
+		}
+		else if (action == 4) {
+			if (salon.size() < 2) {
+				cout << "There are no other kitties in the salon for " << k.getName() << " to play with." << endl;
+			}
+			else {
+				cout << "Who should " << k.getName() << " play with? ";
+				cin >> ws;
+				string friendName;
+				getline(cin, friendName);
+
+				int friendIndex = -1;
+				for (size_t i = 0; i < salon.size(); i++) {
+					if (salon[i].getName() == friendName && salon[i].getName() != k.getName()) {
+						friendIndex = i;
+						break;
+					}
+				}
+				if (friendIndex != -1) {
+					k.play(salon[friendIndex]);
+					k.losePatience();
+					salon[friendIndex].losePatience();
+				}
+			}
+		}
+		else {
+			interacting = false;
+		}
 	}
 }
