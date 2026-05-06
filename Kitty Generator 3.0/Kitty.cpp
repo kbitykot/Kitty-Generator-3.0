@@ -1,6 +1,17 @@
 #include "Kitty.h"
 #include<iostream>
 
+Kitty::Kitty() {
+	name = "Unnamed";
+	age.amount = 0;
+	age.isAdult = false;
+	size = KittySize::Tiny;
+	furLength = FurLength::Hairless;
+	hasHeterochromia = false;
+	tail = TailLength::Short;
+
+}
+
 void Kitty::meow() {
 	std::string adultMeows[] = {
 		"meows happily.",
@@ -24,10 +35,10 @@ void Kitty::meow() {
 
 	int random = rand() % totalMeows;
 
-	if (isKitten == false) {
+	if (age.isAdult == true) {
 		std::cout << name << " " << adultMeows[random] << std::endl;
 	}
-	else if (isKitten == true) {
+	else if (age.isAdult == false) {
 		std::cout << name << " " << kittenMeows[random] << std::endl;
 	}
 }
@@ -100,5 +111,26 @@ void Kitty::introduce() {
 	}
 	else {
 		this->hiss();
+	}
+}
+
+std::string Kitty::getFurLabel() const {
+	std::string labels[] = { "Hairless", "Shorthair", "Average Fur", "Longhair", "Extra Fluffy" };
+	return labels[static_cast<int>(furLength)];
+}
+
+std::string Kitty::getTailLabel() const {
+	std::string labels[] = { "Short", "Medium", "Long" };
+	return labels[static_cast<int>(tail)];
+}
+
+std::string Kitty::getSizeLabel() const {
+	if (!age.isAdult) {
+		std::string labels[] = { "Tiny", "Small", "Average", "Big" };
+		return labels[static_cast<int>(size)];
+	}
+	else {
+		std::string labels[] = { "Small", "Average", "Big", "Monster" };
+		return labels[static_cast<int>(size)];
 	}
 }

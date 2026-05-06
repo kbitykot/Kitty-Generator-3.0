@@ -27,15 +27,18 @@ private:
 	TailLength tail;
 	std::vector<std::string> personality;
 	Age age;
-	bool isKitten, hasHeterochromia;
 	std::vector<std::string> eyeColors;
 	std::vector<FurPattern> patterns;
 	FurLength furLength;
 	KittySize size;
 
 public:
+    Kitty();
     void setName(std::string n) {
         name = n;
+    }
+    void setGender(std::string g) {
+        gender = g;
     }
     void setAge(int amount, bool isAdult) {
         age.amount = amount;
@@ -46,6 +49,9 @@ public:
     }
     void setSize(KittySize s) {
         size = s;
+    }
+    void setTail(TailLength t) {
+        tail = t;
     }
 
     //Vectors: "add" one at a time
@@ -74,6 +80,18 @@ public:
     }
     KittySize getSize() const {
         return size;
+    }
+    std::string getGender() const {
+        return gender;
+    }
+    std::string getFurLabel() const;
+    std::string getTailLabel() const;
+    std::string getSizeLabel() const;
+    bool getHasHeterochromia() const {
+        return eyeColors.size() > 1;
+    }
+    bool isAdult() const {
+        return age.isAdult;
     }
 
     // Returning vectors by reference is more efficient
