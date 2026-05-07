@@ -148,6 +148,10 @@ int main() {
 	
 	if (salon.empty()) {
 		cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
+		if (cin.peek() == '\n') {
+			cin.ignore();
+		}
+
 		cin.get();
 
 		Kitty newKitty = createKitty(salon);
