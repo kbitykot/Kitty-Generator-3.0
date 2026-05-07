@@ -56,7 +56,7 @@ void Kitty::hiss() {
 
 	int random = rand() % hissTotal;
 
-	std::cout << name << hisses[random] << std::endl;
+	std::cout << name << " " << hisses[random] << std::endl;
 }
 
 void Kitty::play(std::string toy) {

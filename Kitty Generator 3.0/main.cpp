@@ -167,7 +167,7 @@ int main() {
 				Kitty newKitty = createKitty();
 				creationDelay();
 				salon.push_back(newKitty);
-				newKitty.introduce();
+				salon.back().introduce();
 			}
 			break;
 		}
