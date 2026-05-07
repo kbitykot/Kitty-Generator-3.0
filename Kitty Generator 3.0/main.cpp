@@ -136,7 +136,6 @@ int main() {
 	}
 	
 	if (salon.empty()) {
-		cin.ignore(1000, '\n');
 		cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
 		cin.get();
 
@@ -399,7 +398,7 @@ void setColors(Kitty& k) {
 		char hasPat = getValidatedChar("Does your kitty have patterns? [Y/N]: ", "YN");
 
 		if (hasPat == 'Y') {
-			cout << "Here are the available patterns:" << endl;
+			cout << "Here are the available patterns. You can also select the same pattern multiple times to set a different color for the same pattern." << endl;
 			cout << "1 - Point\n2 - Speckles\n3 - Spots\n4 - Patches\n5 - Stripes" << endl;
 			bool adding = true;
 			while (adding && k.getPatterns().size() < 3) {
@@ -419,8 +418,10 @@ void setColors(Kitty& k) {
 		const auto& selectedPatterns = k.getPatterns();
 
 		cout << "Here are the patterns you selected:" << endl;
-		for (const auto& p : selectedPatterns) {
-			cout << "- " << k.getPatternLabel(p) << endl;
+		for (size_t i = 0; i < selectedPatterns.size(); i++) {
+			cout << "- " << k.getPatternLabel(selectedPatterns[i]);
+			if (selectedPatterns.size() > 1) cout << " [" << (i + 1) << "]";
+			cout << endl;
 		}
 		confirmed = getValidatedChar("Do you like these patterns? [Y/N]: ", "YN");
 	}
@@ -444,7 +445,10 @@ void setColors(Kitty& k) {
 				string patternColor;
 				string label = k.getPatternLabel(patterns[i]);
 
-				cout << "Please enter the color for your kitty's " << label << ": ";
+				cout << "Please enter the color for your kitty's " << label;
+				if (patterns.size() > 1) {
+					cout << " [" << (i + 1) << "]: ";
+				}
 				getline(cin >> ws, patternColor);
 				k.addFurColor(patternColor);
 			}
