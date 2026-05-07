@@ -6,6 +6,7 @@
 #include<fstream>
 #include<thread>
 #include<chrono>
+#include<algorithm>
 
 using namespace std;
 
@@ -62,7 +63,7 @@ char getValidatedChar(string prompt, string allowed) { //Validates specific char
 	return input;
 }
 
-bool isValidTrait(string trait) {
+bool isValidTrait(string trait) { //Checks if a personality trait is valid (has no special characters or numbers).
 	if (trait.length() == 0)
 		return false;
 	for (char c : trait) {
@@ -73,12 +74,12 @@ bool isValidTrait(string trait) {
 	return true;
 }
 
-bool fileExists(const string& filename) {
+bool fileExists(const string& filename) { //Helper function which checks if there is already a file for the program.
 	ifstream check(filename);
 	return check.good();
 }
 
-void creationDelay() {
+void creationDelay() { //Fun cosmetic addition; just delays output statements.
 	cout << "\nPlease wait while we finalize the details." << endl;
 	cout << "Sending kitty to a groomer..." << endl;
 	this_thread::sleep_for(chrono::seconds(5));
@@ -99,6 +100,12 @@ void creationDelay() {
 	cout << "Placing kitty in its carrier..." << endl;
 	this_thread::sleep_for(chrono::seconds(3));
 	cout << "All finished!" << endl;
+}
+
+string toLower(string data) { //Helper function which acts like cctype's tolower() function but for strings.
+	transform(data.begin(), data.end(), data.begin(),
+		[](unsigned char c) {return tolower(c); });
+	return data;
 }
 
 int main() {
@@ -135,6 +142,8 @@ int main() {
 	creationDelay();
 	salon.push_back(newKitty);
 	
+	newKitty.introduce();
+
 	bool running = true;
 	while (running) {
 		cout << "\n--- MAIN MENU ---" << endl;
@@ -155,8 +164,8 @@ int main() {
 				Kitty newKitty = createKitty();
 				creationDelay();
 				salon.push_back(newKitty);
+				newKitty.introduce();
 			}
-			
 			break;
 		}
 		case 2: {
@@ -709,13 +718,12 @@ void interactWithKitty(vector<Kitty>& salon) {
 
 	cout << "\n--- Search for a Kitty ---" << endl;
 	cout << "Enter the name of the kitty you'd like to see: ";
-	cin >> ws;
 	string searchName;
-	getline(cin, searchName);
+	getline(cin >> ws, searchName);
 	int foundIndex = -1;
 	for (size_t i = 0; i < salon.size(); i++) {
-		if (salon[i].getName() == searchName) {
-			foundIndex = i;
+		if (toLower(salon[i].getName()) == toLower(searchName)) {
+			foundIndex = (int)i;
 			break;
 		}
 	}
@@ -777,14 +785,17 @@ void interactWithKitty(vector<Kitty>& salon) {
 			}
 			else {
 				cout << "Who should " << k.getName() << " play with? ";
-				cin >> ws;
 				string friendName;
-				getline(cin, friendName);
+				getline(cin >> ws, friendName);
 
 				int friendIndex = -1;
 				for (size_t i = 0; i < salon.size(); i++) {
-					if (salon[i].getName() == friendName && salon[i].getName() != k.getName()) {
-						friendIndex = i;
+					string currentName = toLower(salon[i].getName());
+					string targetFriend = toLower(friendName);
+					string seekerName = toLower(k.getName());
+
+					if (currentName == targetFriend && currentName != seekerName) {
+						friendIndex = (int)i;
 						break;
 					}
 				}
@@ -792,6 +803,9 @@ void interactWithKitty(vector<Kitty>& salon) {
 					k.play(salon[friendIndex]);
 					k.losePatience();
 					salon[friendIndex].losePatience();
+				}
+				else {
+					cout << "That kitty couldn't be found." << endl;
 				}
 			}
 		}
