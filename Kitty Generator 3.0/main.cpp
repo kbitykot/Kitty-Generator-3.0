@@ -12,8 +12,8 @@ using namespace std;
 
 const int MAX_KITTIES = 5;
 
-Kitty createKitty();                //Nested function which calls functions that set kitty values.
-void setGeneralInfo(Kitty&);        //Sets general info for kitty.
+Kitty createKitty(const vector<Kitty>&);                //Nested function which calls functions that set kitty values.
+void setGeneralInfo(Kitty&, const vector<Kitty>&);        //Sets general info for kitty.
 void setAttributes(Kitty&);         //Sets attributes for kitty.
 void setPersonality(Kitty&);        //Allows user to set 5 personality traits for kitty.
 void setColors(Kitty&);             //Allows user to set colors for kitty.
@@ -79,6 +79,12 @@ bool fileExists(const string& filename) { //Helper function which checks if ther
 	return check.good();
 }
 
+string toLower(string data) { //Helper function which acts like cctype's tolower() function but for strings.
+	transform(data.begin(), data.end(), data.begin(),
+		[](unsigned char c) {return tolower(c); });
+	return data;
+}
+
 bool isNameTaken(const vector<Kitty>& salon, const string& name) { //Safety check to make sure no 2 kitties have the same name
 	for (const auto& k : salon) {
 		if (toLower(k.getName()) == toLower(name)) {
@@ -111,11 +117,7 @@ void creationDelay() { //Fun cosmetic addition; just delays output statements.
 	cout << "All finished!" << endl;
 }
 
-string toLower(string data) { //Helper function which acts like cctype's tolower() function but for strings.
-	transform(data.begin(), data.end(), data.begin(),
-		[](unsigned char c) {return tolower(c); });
-	return data;
-}
+
 
 int main() {
 	srand(time(0));
@@ -148,7 +150,7 @@ int main() {
 		cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
 		cin.get();
 
-		Kitty newKitty = createKitty();
+		Kitty newKitty = createKitty(salon);
 
 		creationDelay();
 		salon.push_back(newKitty);
@@ -173,7 +175,7 @@ int main() {
 				cout << "\nThe salon is full! You cannot have more than 5 kitties at once." << endl;
 			}
 			else {
-				Kitty newKitty = createKitty();
+				Kitty newKitty = createKitty(salon);
 				creationDelay();
 				salon.push_back(newKitty);
 				salon.back().introduce();
@@ -206,10 +208,10 @@ int main() {
 	return 0;
 }
 
-Kitty createKitty() {
+Kitty createKitty(const vector<Kitty>& salon) {
 	Kitty temp;
 	cout << "Great! Let's begin. First, we'll need to get the kitty's general information, such as name, gender, and age." << endl;
-	setGeneralInfo(temp);
+	setGeneralInfo(temp, salon);
 	cout << "\nNow that we've found the kitty's general information, we can now set the kitty's attributes. These include the fur and tail lengths, body size, and personality traits." << endl;
 	setAttributes(temp);
 	setPersonality(temp);
