@@ -134,16 +134,19 @@ int main() {
 	else {
 		cout << "Welcome to the Kitty Salon! We have prepared an even better system to create kitties since Kitty Generator 2.5. Now, you can take them home with you!" << endl;
 	}
-	cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
-	cin.get();
-
-	Kitty newKitty = createKitty();
-
-	creationDelay();
-	salon.push_back(newKitty);
 	
-	newKitty.introduce();
+	if (salon.empty()) {
+		cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
+		cin.get();
 
+		Kitty newKitty = createKitty();
+
+		creationDelay();
+		salon.push_back(newKitty);
+	
+		salon.back().introduce();
+	}
+	
 	bool running = true;
 	while (running) {
 		cout << "\n--- MAIN MENU ---" << endl;
