@@ -136,6 +136,7 @@ int main() {
 	}
 	
 	if (salon.empty()) {
+		cin.ignore(1000, '\n');
 		cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
 		cin.get();
 
@@ -736,9 +737,11 @@ void interactWithKitty(vector<Kitty>& salon) {
 	}
 
 	Kitty& k = salon[foundIndex];
+	k.setTolerance(rand() % 10 + 3); //Range between 3 to 13. Number changes after each session. Even ragdoll cats have their limits!
 	k.resetPatience();
+	
 	cout << "\nYou walk up to " << k.getName() << "." << endl;
-	k.setTolerance(rand() % 48 + 3); //Some kitties don't like interacting, while others tolerate anything ... (looks at ragdoll cats) ... In this program, the tolerance will change with every interaction, because kitties are quite unpredictable at times.
+	
 
 	bool interacting = true;
 	while (interacting) {

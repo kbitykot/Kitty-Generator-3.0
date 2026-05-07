@@ -8,7 +8,7 @@ Kitty::Kitty() {
 	size = KittySize::Tiny;
 	furLength = FurLength::Hairless;
 	tail = TailLength::Short;
-
+	patience = 0;
 }
 
 void Kitty::meow() {
