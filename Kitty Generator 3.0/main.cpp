@@ -79,7 +79,7 @@ bool fileExists(const string& filename) {
 }
 
 void creationDelay() {
-	cout << "Your kitty has been created! Please wait while we finalize the details." << endl;
+	cout << "\nPlease wait while we finalize the details." << endl;
 	cout << "Sending kitty to a groomer..." << endl;
 	this_thread::sleep_for(chrono::seconds(5));
 	cout << "Giving kitty a bath..." << endl;
@@ -128,11 +128,9 @@ int main() {
 		cout << "Welcome to the Kitty Salon! We have prepared an even better system to create kitties since Kitty Generator 2.5. Now, you can take them home with you!" << endl;
 	}
 	cout << "Let's create your first kitty!\nPress ENTER to begin kitty creation...";
-	cin.ignore(1000, '\n');
 	cin.get();
 
-	Kitty newKitty;
-	createKitty();
+	Kitty newKitty = createKitty();
 
 	creationDelay();
 	salon.push_back(newKitty);
@@ -154,8 +152,7 @@ int main() {
 				cout << "\nThe salon is full! You cannot have more than 5 kitties at once." << endl;
 			}
 			else {
-				Kitty newKitty;
-				createKitty();
+				Kitty newKitty = createKitty();
 				creationDelay();
 				salon.push_back(newKitty);
 			}
@@ -283,7 +280,7 @@ void setAttributes(Kitty& k) {
 		int choice = getValidatedInput<int>("Enter choice (1-5): ", 1, 5);
 		k.setFurLength(static_cast<FurLength>(choice - 1));
 
-		cout << "You chose " << k.getFurLabel() << " fur for your kitty. Is this OK? [Y/N]: ";
+		cout << "You chose " << k.getFurLabel() << " fur type for your kitty. Is this OK? [Y/N]: ";
 		confirmed = getValidatedChar("", "YN");
 	}
 
@@ -294,7 +291,7 @@ void setAttributes(Kitty& k) {
 		int choice = getValidatedInput<int>("Enter your choice (1-3): ", 1, 3);
 		k.setTail(static_cast<TailLength>(choice - 1));
 
-		cout << "Your kitty will have a(n) " << k.getTailLabel() << "tail. Is this OK? [Y/N]: ";
+		cout << "Your kitty will have a " << k.getTailLabel() << " tail. Is this OK? [Y/N]: ";
 		confirmed = getValidatedChar("", "YN");
 	}
 
@@ -329,7 +326,7 @@ void setPersonality(Kitty& k) {
 		k.clearPersonality();
 
 		cout << "It's time to define your kitty's personality! You can pick 5 adjectives of your choosing to describe your kitty." << endl;
-		cin >> ws;
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 		for (int i = 0; i < 5; i++) {
 			string trait;
@@ -356,14 +353,13 @@ void setColors(Kitty& k) {
 	while (confirmed == 'N') {
 		k.clearEyeColors();
 		char heterochromia = getValidatedChar("Is your kitty heterochromatic (2 different eye colors)? [Y/N]: ", "YN");
-		cin >> ws;
 		if (heterochromia == 'Y') {
 			cout << "Enter the kitty's left eye color: ";
 			string left;
-			getline(cin, left);
+			getline(cin >> ws, left);
 			cout << "Now enter the kitty's right eye color: ";
 			string right;
-			getline(cin, right);
+			getline(cin >> ws, right);
 
 			k.addEyeColor(left);
 			k.addEyeColor(right);
@@ -374,9 +370,8 @@ void setColors(Kitty& k) {
 		}
 		else {
 			cout << "Enter the kitty's eye color: ";
-			cin >> ws;
 			string color;
-			getline(cin, color);
+			getline(cin >> ws, color);
 			k.addEyeColor(color);
 			cout << "You chose " << color << " for your kitty's eyes. Do you like this color? [Y/N]: ";
 		}
@@ -414,7 +409,7 @@ void setColors(Kitty& k) {
 		for (const auto& p : selectedPatterns) {
 			cout << "- " << k.getPatternLabel(p) << endl;
 		}
-		confirmed = getValidatedChar("Do you like these colors? [Y/N]", "YN");
+		confirmed = getValidatedChar("Do you like these patterns? [Y/N]: ", "YN");
 	}
 
 	//Set fur colors
@@ -423,11 +418,10 @@ void setColors(Kitty& k) {
 
 	while (confirmed == 'N') {
 		k.clearFurColors();
-		cin >> ws;
 
 		string primary;
 		cout << "Please enter the kitty's primary fur color: ";
-		getline(cin, primary);
+		getline(cin >> ws, primary);
 		k.addFurColor(primary);
 
 		const auto& patterns = k.getPatterns();
@@ -438,7 +432,7 @@ void setColors(Kitty& k) {
 				string label = k.getPatternLabel(patterns[i]);
 
 				cout << "Please enter the color for your kitty's " << label << ": ";
-				getline(cin, patternColor);
+				getline(cin >> ws, patternColor);
 				k.addFurColor(patternColor);
 			}
 		}
@@ -514,6 +508,7 @@ void saveKitties(const vector<Kitty>& salon) { //Binary file to assist in saving
 			//Save strings
 			auto saveString = [&](const string& s) {
 				size_t len = s.length();
+				mew.write(reinterpret_cast<const char*>(&len), sizeof(len));
 				mew.write(s.c_str(), len);
 				};
 			saveString(k.getName());
@@ -563,9 +558,10 @@ vector<Kitty> loadKitties() { //Loads kitties. Gemini helped with writing.
 	if (mew.is_open()) {
 		size_t count = 0;
 		mew.read(reinterpret_cast<char*>(&count), sizeof(count));
-		Kitty k;
+		
 
 		for (size_t i = 0; i < count; i++) {
+			Kitty k;
 			//Load strings
 			auto readString = [&]() -> string {
 				size_t len = 0;
@@ -617,8 +613,9 @@ vector<Kitty> loadKitties() { //Loads kitties. Gemini helped with writing.
 				mew.read(reinterpret_cast<char*>(&p), sizeof(p));
 				k.addPattern(p);
 			}
+			loadedSalon.push_back(k);
 		}
-		loadedSalon.push_back(k);
+		
 		mew.close();
 		cout << loadedSalon.size() << " kitties have been loaded and are ready to play!" << endl;
 	}
@@ -669,12 +666,18 @@ void displayKitties(const vector<Kitty>& salon) {
 
 		const auto& patterns = k.getPatterns();
 		const auto& colors = k.getFurColors();
-		cout << "Primary Color: " << colors[0] << endl;
+
+		if (!colors.empty()) {
+			cout << "Primary Color: " << colors[0] << endl;
+		}
 
 		if (!patterns.empty() && patterns[0] != FurPattern::Plain) {
 			cout << "Patterns: ";
 			for (size_t p = 0; p < patterns.size(); p++) {
-				cout << colors[p + 1] << " " << k.getPatternLabel(patterns[p]);
+				if ((p + 1) < colors.size()) {
+					cout << colors[p + 1] << " ";
+				}
+				cout << k.getPatternLabel(patterns[p]);
 				if (p < patterns.size() - 1) {
 					cout << ", ";
 				}
