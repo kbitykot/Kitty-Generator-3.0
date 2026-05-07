@@ -645,23 +645,23 @@ void displayKitties(const vector<Kitty>& salon) {
 		int years = kAge.amount / 12;
 		int months = kAge.amount % 12;
 
-		cout << (kAge.isAdult ? "Adult" : "Kitten") << "; " << years << " years and " << months << " months old" << endl;
+		cout << "Age: " << (kAge.isAdult ? "Adult" : "Kitten") << " | " << years << " years and " << months << " months old" << endl;
 		cout << "Gender: " << k.getGender() << endl;
 		cout << "Size: " << k.getSizeLabel() << endl;
+		cout << endl;
+
+		cout << "[ APPEARANCE ]" << endl;
 		
 		const auto& eyes = k.getEyeColors();
 		if (eyes.size() > 1) {
-			cout << "   Eye Colors   " << endl;
-			cout << "----------------" << endl;
-			cout << "Left: " << eyes[0] << endl;
-			cout << "Right: " << eyes[1] << endl;
+			cout << "Eye Colors:" << endl;
+			cout << "- Left: " << eyes[0] << endl;
+			cout << "- Right: " << eyes[1] << endl;
 		}
 		else {
 			cout << "Eye Color: " << eyes[0] << endl;
 		}
 
-		cout << "      Fur Information      " << endl;
-		cout << "---------------------------" << endl;
 		cout << "Fur Type: " << k.getFurLabel() << endl;
 
 		const auto& patterns = k.getPatterns();
@@ -687,15 +687,16 @@ void displayKitties(const vector<Kitty>& salon) {
 		else {
 			cout << "Patterns: None (Plain)" << endl;
 		}
-		cout << "Purrsonality Traits" << endl;
-		cout << "-------------------" << endl;
+
+		cout << endl;
+		cout << "[ PURRSONALITY ]" << endl;
 		const auto& traits = k.getPersonality();
 		for (size_t j = 0; j < traits.size(); j++) {
-			cout << traits[j] << endl;
+			cout << "- " << traits[j] << endl;
 		}
-		cout << "   Accessory   " << endl;
-		cout << "---------------" << endl;
-		cout << k.getAccessory() << endl;
+		cout << endl;
+
+		cout << "Accessory: " << k.getAccessory() << endl;
 		cout << "*********************************************" << endl;
 	}
 }
