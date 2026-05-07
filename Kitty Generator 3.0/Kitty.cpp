@@ -97,7 +97,7 @@ void Kitty::attack() {
 		"doesn't like the situation and bunny-kicks you."
 	};
 	int random = rand() % 7;
-	std::cout << name << attacks[random] << std::endl;
+	std::cout << name << " " << attacks[random] << std::endl;
 }
 
 void Kitty::introduce() {
