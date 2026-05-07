@@ -79,6 +79,15 @@ bool fileExists(const string& filename) { //Helper function which checks if ther
 	return check.good();
 }
 
+bool isNameTaken(const vector<Kitty>& salon, const string& name) { //Safety check to make sure no 2 kitties have the same name
+	for (const auto& k : salon) {
+		if (toLower(k.getName()) == toLower(name)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void creationDelay() { //Fun cosmetic addition; just delays output statements.
 	cout << "\nPlease wait while we finalize the details." << endl;
 	cout << "Sending kitty to a groomer..." << endl;
@@ -150,7 +159,7 @@ int main() {
 	bool running = true;
 	while (running) {
 		cout << "\n--- MAIN MENU ---" << endl;
-		cout << "1. Create Another Kitty (up to 5)" << endl;
+		cout << "1. Create Another Kitty (you may have up to 5)" << endl;
 		cout << "2. View Kitties" << endl;
 		cout << "3. Interact with a Kitty" << endl;
 		cout << "4. Save Progress" << endl;
@@ -212,14 +221,27 @@ Kitty createKitty() {
 	return temp;
 }
 
-void setGeneralInfo(Kitty& k) {
+void setGeneralInfo(Kitty& k, const vector<Kitty>& salon) {
 	char confirmed = 'N';
 
 	while (confirmed == 'N') {
-		cout << "\nPlease enter the desired name for your kitty: ";
-		cin >> ws; //clears leftover whitespace or newlines
+		bool nameIsTaken = true;
 		string tempName;
-		getline(cin, tempName);
+		
+		while (nameIsTaken) {
+			cout << "\nPlease enter the desired name for your kitty: ";
+			cin >> ws; //clears leftover whitespace or newlines
+			getline(cin, tempName);
+			
+			nameIsTaken = false;
+			for (const auto& existingKitty : salon) {
+				if (toLower(existingKitty.getName()) == toLower(tempName)) {
+					cout << "A kitty named \"" << tempName << "\" already exists! Please choose a different name." << endl;
+					nameIsTaken = true;
+					break;
+				}
+			}
+		}
 		k.setName(tempName);
 
 		cout << "You chose " << k.getName() << " as your kitty's name. Do you like this choice? [Y/N]: ";
