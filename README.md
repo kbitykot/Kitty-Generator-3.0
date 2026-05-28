@@ -1,4 +1,4 @@
-# Kitty Generator 3.0
+# Kitty Generator
 
 Kitty Generator is an interactive program that allows you to create, customize, and manage up to 5 individual kitties! Once your felines are generated, you can interact with them through a dynamic console menu.
 
